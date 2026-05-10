@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="id" x-data="{ mobileMenu: false, activeNav: 'beranda', scrolled: false }" x-init="window.addEventListener('scroll', () => scrolled = window.scrollY > 50)">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dinas Lingkungan Hidup Kabupaten Maybrat</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Plus Jakarta Sans -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            jakarta: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            forest: {
+              50:  '#f0faf4',
+              100: '#dcf5e6',
+              200: '#bbe9ce',
+              300: '#8dd6ae',
+              400: '#58bb87',
+              500: '#359f6a',
+              600: '#247f53',
+              700: '#1d6644',
+              800: '#1a5238',
+              900: '#17432f',
+              950: '#0b2519',
+            },
+            earth: {
+              50:  '#faf8f2',
+              100: '#f2eddf',
+              200: '#e4d9bd',
+              300: '#d3bf94',
+              400: '#bfa06b',
+              500: '#a8854f',
+              600: '#916d41',
+              700: '#775637',
+              800: '#624632',
+              900: '#523c2c',
+            },
+            sky: {
+              eco: '#e8f5e9',
+            }
+          },
+          boxShadow: {
+            'soft': '0 2px 15px -3px rgba(0,0,0,0.07), 0 10px 20px -2px rgba(0,0,0,0.04)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    html { scroll-behavior: smooth; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f0faf4; }
+    ::-webkit-scrollbar-thumb { background: #359f6a; border-radius: 999px; }
+
+    /* Hero gradient overlay */
+    .hero-overlay {
+      background: linear-gradient(135deg, rgba(23,67,47,0.82) 0%, rgba(53,159,106,0.55) 60%, rgba(11,37,25,0.70) 100%);
+    }
+
+    /* Leaf pattern background */
+    .leaf-bg {
+      background-color: #f0faf4;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2358bb87' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    /* Navbar scroll animation */
+    .navbar-scrolled {
+      backdrop-filter: blur(12px);
+      background-color: rgba(255,255,255,0.95);
+    }
+
+    /* Card hover lift */
+    .card-lift {
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .card-lift:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px -6px rgba(35,127,83,0.18);
+    }
+
+    /* Badge pulse */
+    @keyframes pulse-green {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .badge-live { animation: pulse-green 2s infinite; }
+
+    /* Section reveal */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.6s ease both; }
+
+    /* Stat counter card */
+    .stat-card {
+      background: linear-gradient(135deg, #1d6644 0%, #359f6a 100%);
+    }
+
+    /* Ticker animation */
+    @keyframes ticker {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .ticker-inner { animation: ticker 28s linear infinite; }
+    .ticker-inner:hover { animation-play-state: paused; }
+
+    /* Mobile menu slide */
+    [x-cloak] { display: none !important; }
+  </style>
+</head>
+
+<body class="bg-white text-gray-800 antialiased">
+
+  <!-- ===== TICKER ===== -->
+  <div class="bg-forest-700 text-white text-xs py-1.5 overflow-hidden relative">
+    <div class="ticker-inner flex whitespace-nowrap gap-12">
+      <span class="px-4"><i class="fa fa-bullhorn mr-1"></i> Pengumuman: Jadwal Pelayanan Izin Lingkungan – Senin s/d Jumat, 08.00 – 15.00 WIT</span>
+      <span class="px-4"><i class="fa fa-leaf mr-1"></i> Program Kebersihan Lingkungan Maybrat 2025 Sedang Berjalan</span>
+      <span class="px-4"><i class="fa fa-recycle mr-1"></i> Ayo Ikut Gerakan Pilah Sampah Dari Rumah!</span>
+      <span class="px-4"><i class="fa fa-bullhorn mr-1"></i> Pengumuman: Jadwal Pelayanan Izin Lingkungan – Senin s/d Jumat, 08.00 – 15.00 WIT</span>
+      <span class="px-4"><i class="fa fa-leaf mr-1"></i> Program Kebersihan Lingkungan Maybrat 2025 Sedang Berjalan</span>
+      <span class="px-4"><i class="fa fa-recycle mr-1"></i> Ayo Ikut Gerakan Pilah Sampah Dari Rumah!</span>
+    </div>
+  </div>
+
+  <!-- ===== TOP BAR ===== -->
+  <div class="bg-forest-50 border-b border-forest-100 hidden md:block">
+    <div class="max-w-7xl mx-auto px-6 py-2 flex items-center justify-between text-xs text-forest-700">
+      <div class="flex items-center gap-5">
+        <span><i class="fa fa-map-marker-alt mr-1"></i> Jl. Pemerintahan No. 1, Kumurkek, Maybrat, Papua Barat Daya</span>
+        <span><i class="fa fa-phone mr-1"></i> (0985) 000-0000</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="#" class="hover:text-forest-600"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="hover:text-forest-600"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="hover:text-forest-600"><i class="fab fa-youtube"></i></a>
+        <a href="#" class="hover:text-forest-600"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== NAVBAR ===== -->
+  <header
+    class="sticky top-0 z-50 transition-all duration-300"
+    :class="scrolled ? 'navbar-scrolled shadow-soft' : 'bg-white shadow-sm'"
+  >
+    <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+
+      <!-- Logo -->
+      <a href="#beranda" class="flex items-center gap-3 group">
+        <div class="w-12 h-12 bg-forest-600 rounded-xl flex items-center justify-center shadow-md group-hover:bg-forest-700 transition-colors">
+          <i class="fas fa-leaf text-white text-2xl"></i>
+        </div>
+        <div class="leading-tight">
+          <p class="text-[10px] font-medium text-forest-500 uppercase tracking-widest">Pemerintah Kab. Maybrat</p>
+          <p class="text-sm font-800 text-forest-800 font-extrabold leading-none">Dinas Lingkungan Hidup</p>
+        </div>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden lg:flex items-center gap-1">
+        <template x-for="item in [
+          { id: 'beranda',   label: 'Beranda',    icon: 'fa-house' },
+          { id: 'profil',    label: 'Profil',     icon: 'fa-building-columns' },
+          { id: 'layanan',   label: 'Layanan',    icon: 'fa-gears' },
+          { id: 'informasi', label: 'Informasi',  icon: 'fa-newspaper' },
+          { id: 'galeri',    label: 'Galeri',     icon: 'fa-images' },
+          { id: 'kontak',    label: 'Kontak',     icon: 'fa-envelope' },
+        ]" :key="item.id">
+          <a
+            :href="'#' + item.id"
+            @click="activeNav = item.id"
+            class="px-4 py-2 rounded-md text-sm font-semibold transition-all duration-200 flex items-center gap-1.5"
+            :class="activeNav === item.id
+              ? 'bg-forest-600 text-white shadow-md'
+              : 'text-gray-600 hover:bg-forest-50 hover:text-forest-700'"
+          >
+            <i :class="'fas ' + item.icon + ' text-xs'"></i>
+            <span x-text="item.label"></span>
+          </a>
+        </template>
+      </nav>
+
+      <!-- CTA + Hamburger -->
+      <div class="flex items-center gap-3">
+        <a href="#aduan" class="hidden md:flex items-center gap-2 bg-earth-500 hover:bg-earth-600 text-white text-sm font-semibold px-4 py-2 rounded-md shadow-md transition-all">
+          <i class="fas fa-circle-exclamation"></i> Aduan
+        </a>
+        <button @click="mobileMenu = !mobileMenu" class="lg:hidden w-10 h-10 rounded-md bg-forest-50 flex items-center justify-center text-forest-700 hover:bg-forest-100 transition-colors">
+          <i class="fas" :class="mobileMenu ? 'fa-xmark' : 'fa-bars'"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div x-show="mobileMenu" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="lg:hidden border-t border-forest-100 bg-white px-6 py-4 space-y-1 shadow-md">
+      <template x-for="item in [
+        { id: 'beranda',   label: 'Beranda',    icon: 'fa-house' },
+        { id: 'profil',    label: 'Profil',     icon: 'fa-building-columns' },
+        { id: 'layanan',   label: 'Layanan',    icon: 'fa-gears' },
+        { id: 'informasi', label: 'Informasi',  icon: 'fa-newspaper' },
+        { id: 'galeri',    label: 'Galeri',     icon: 'fa-images' },
+        { id: 'kontak',    label: 'Kontak',     icon: 'fa-envelope' },
+      ]" :key="item.id">
+        <a
+          :href="'#' + item.id"
+          @click="activeNav = item.id; mobileMenu = false"
+          class="flex items-center gap-3 px-4 py-2.5 rounded-md text-sm font-semibold transition-all"
+          :class="activeNav === item.id ? 'bg-forest-600 text-white' : 'text-gray-700 hover:bg-forest-50 hover:text-forest-700'"
+        >
+          <i :class="'fas ' + item.icon + ' w-4 text-center'"></i>
+          <span x-text="item.label"></span>
+        </a>
+      </template>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section id="beranda" class="relative min-h-[90vh] flex items-center overflow-hidden">
+    <img src="./img/ilustrasi-1.jpeg" alt="Hero" class="absolute inset-0 w-full h-full object-cover" />
+    <div class="hero-overlay absolute inset-0"></div>
+
+    <!-- Floating badge -->
+    <div class="absolute top-8 right-8 hidden md:flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/25 text-white text-xs font-semibold px-3 py-2 rounded-full">
+      <span class="w-2 h-2 rounded-full bg-green-400 badge-live inline-block"></span>
+      Website Resmi DLH Maybrat
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 py-20 fade-up">
+      <div class="max-w-2xl">
+        <span class="inline-flex items-center gap-2 bg-forest-500/30 backdrop-blur-sm border border-forest-300/30 text-green-200 text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
+          <i class="fas fa-seedling"></i> Kabupaten Maybrat, Papua Barat Daya
+        </span>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-5">
+          Dinas Lingkungan Hidup<br/>
+          <span class="text-green-300">Kabupaten Maybrat</span>
+        </h1>
+        <p class="text-white/80 text-base md:text-lg leading-relaxed mb-8">
+          Melindungi, melestarikan, dan meningkatkan kualitas lingkungan hidup demi kesejahteraan masyarakat Maybrat yang berkelanjutan.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a href="#layanan" class="flex items-center gap-2 bg-forest-500 hover:bg-forest-400 text-white font-semibold px-6 py-3 rounded-md shadow-lg transition-all">
+            <i class="fas fa-gears"></i> Lihat Layanan
+          </a>
+          <a href="#profil" class="flex items-center gap-2 bg-white/15 backdrop-blur-sm hover:bg-white/25 border border-white/30 text-white font-semibold px-6 py-3 rounded-md transition-all">
+            <i class="fas fa-circle-info"></i> Tentang Kami
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom wave -->
+    <div class="absolute bottom-0 left-0 right-0">
+      <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="white"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ===== STATS ===== -->
+  <section class="relative z-10 -mt-2 pb-12 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <template x-for="stat in [
+          { icon: 'fa-tree',        val: '1.2 Jt', label: 'Hektar Hutan Terlindungi' },
+          { icon: 'fa-file-circle-check', val: '320+', label: 'Izin Lingkungan Diterbitkan' },
+          { icon: 'fa-users',       val: '48 Rb', label: 'Masyarakat Terlayani' },
+          { icon: 'fa-recycle',     val: '85%',   label: 'Target Pengelolaan Sampah' },
+        ]" :key="stat.label">
+          <div class="stat-card text-white rounded-md shadow-md p-5 flex flex-col items-center text-center card-lift">
+            <div class="w-12 h-12 bg-white/15 rounded-md flex items-center justify-center mb-3">
+              <i :class="'fas ' + stat.icon + ' text-xl'"></i>
+            </div>
+            <p class="text-3xl font-extrabold" x-text="stat.val"></p>
+            <p class="text-xs text-green-100 mt-1 leading-snug" x-text="stat.label"></p>
+          </div>
+        </template>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROFIL ===== -->
+  <section id="profil" class="py-20 leaf-bg">
+    <div class="max-w-7xl mx-auto px-6">
+
+      <!-- Section Header -->
+      <div class="text-center mb-14">
+        <span class="inline-block bg-forest-100 text-forest-700 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-3">Tentang Kami</span>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-forest-900">Profil Dinas</h2>
+        <p class="text-gray-500 mt-3 max-w-xl mx-auto">Mengenal lebih dekat Dinas Lingkungan Hidup Kabupaten Maybrat, visi misi, dan struktur organisasinya.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-10 items-center">
+        <div>
+          <img src="./img/ilustrasi-2.jpeg" alt="Gedung Dinas" class="rounded-md shadow-md w-full object-cover" />
+        </div>
+        <div class="space-y-6">
+          <div class="bg-white rounded-md shadow-soft p-6 border-l-4 border-forest-500">
+            <h3 class="text-lg font-bold text-forest-800 mb-2"><i class="fas fa-eye mr-2 text-forest-500"></i>Visi</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">"Terwujudnya Kabupaten Maybrat yang Bersih, Hijau, dan Berwawasan Lingkungan demi Kesejahteraan Masyarakat yang Berkelanjutan."</p>
+          </div>
+          <div class="bg-white rounded-md shadow-soft p-6 border-l-4 border-earth-400">
+            <h3 class="text-lg font-bold text-forest-800 mb-2"><i class="fas fa-bullseye mr-2 text-earth-500"></i>Misi</h3>
+            <ul class="text-gray-600 text-sm space-y-2 leading-relaxed">
+              <li class="flex gap-2"><i class="fas fa-check-circle text-forest-500 mt-0.5"></i> Meningkatkan kualitas pengelolaan lingkungan hidup dan sumber daya alam.</li>
+              <li class="flex gap-2"><i class="fas fa-check-circle text-forest-500 mt-0.5"></i> Mengurangi tingkat pencemaran dan kerusakan lingkungan secara berkelanjutan.</li>
+              <li class="flex gap-2"><i class="fas fa-check-circle text-forest-500 mt-0.5"></i> Mendorong partisipasi aktif masyarakat dalam menjaga kelestarian alam.</li>
+              <li class="flex gap-2"><i class="fas fa-check-circle text-forest-500 mt-0.5"></i> Meningkatkan kapasitas SDM dan tata kelola lingkungan hidup yang transparan.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tupoksi Cards -->
+      <div class="mt-16">
+        <h3 class="text-xl font-bold text-forest-800 mb-6 text-center">Tugas Pokok &amp; Fungsi</h3>
+        <div class="grid md:grid-cols-3 gap-5">
+          <template x-for="t in [
+            { icon: 'fa-shield-halved',      title: 'Perlindungan Lingkungan', desc: 'Melaksanakan perlindungan, pengendalian, dan pemulihan fungsi lingkungan hidup di wilayah Maybrat.' },
+            { icon: 'fa-flask',              title: 'Pengendalian Pencemaran', desc: 'Pemantauan, pengawasan, dan pengendalian pencemaran air, udara, dan tanah sesuai regulasi.' },
+            { icon: 'fa-trash-can-arrow-up', title: 'Pengelolaan Sampah', desc: 'Perencanaan dan pengawasan sistem pengelolaan sampah dan limbah B3 di seluruh wilayah kabupaten.' },
+            { icon: 'fa-file-contract',      title: 'Perizinan Lingkungan', desc: 'Penerbitan dan pengawasan dokumen lingkungan hidup (AMDAL, UKL-UPL, dan SPPL) bagi pelaku usaha.' },
+            { icon: 'fa-graduation-cap',     title: 'Edukasi Lingkungan', desc: 'Pembinaan, penyuluhan, dan kampanye peningkatan kesadaran lingkungan kepada masyarakat luas.' },
+            { icon: 'fa-chart-line',         title: 'Tata Kelola Data', desc: 'Penyusunan data, informasi, dan pelaporan kinerja lingkungan hidup secara berkala dan transparan.' },
+          ]" :key="t.title">
+            <div class="bg-white rounded-md shadow-soft p-5 card-lift border border-forest-100">
+              <div class="w-11 h-11 bg-forest-100 rounded-md flex items-center justify-center mb-4">
+                <i :class="'fas ' + t.icon + ' text-forest-600 text-lg'"></i>
+              </div>
+              <h4 class="font-bold text-forest-800 text-sm mb-2" x-text="t.title"></h4>
+              <p class="text-gray-500 text-xs leading-relaxed" x-text="t.desc"></p>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== LAYANAN ===== -->
+  <section id="layanan" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-14">
+        <span class="inline-block bg-earth-100 text-earth-700 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-3">Layanan Publik</span>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-forest-900">Layanan Kami</h2>
+        <p class="text-gray-500 mt-3 max-w-xl mx-auto">Berbagai layanan administrasi dan publik yang disediakan oleh Dinas Lingkungan Hidup Kabupaten Maybrat untuk masyarakat.</p>
+      </div>
+
+      <!-- Layanan Grid -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <template x-for="svc in [
+          { icon: 'fa-file-circle-plus',    color: 'forest', title: 'Permohonan AMDAL',          desc: 'Pengajuan dokumen Analisis Mengenai Dampak Lingkungan bagi kegiatan usaha wajib AMDAL.', tag: 'Perizinan' },
+          { icon: 'fa-file-signature',      color: 'earth',  title: 'Pengurusan UKL-UPL',         desc: 'Layanan penerbitan dokumen Upaya Pengelolaan dan Pemantauan Lingkungan Hidup.', tag: 'Perizinan' },
+          { icon: 'fa-recycle',             color: 'forest', title: 'Pengelolaan Limbah B3',       desc: 'Pendaftaran dan pengawasan pengelolaan Bahan Berbahaya dan Beracun dari industri.', tag: 'Pengawasan' },
+          { icon: 'fa-droplet',             color: 'earth',  title: 'Pemantauan Kualitas Air',     desc: 'Pengujian dan pemantauan kualitas air sungai, danau, dan sumber air bersih masyarakat.', tag: 'Pemantauan' },
+          { icon: 'fa-wind',                color: 'forest', title: 'Pemantauan Kualitas Udara',   desc: 'Pengukuran dan analisis kualitas udara ambien di kawasan permukiman dan industri.', tag: 'Pemantauan' },
+          { icon: 'fa-leaf',                color: 'earth',  title: 'Aduan Lingkungan',            desc: 'Saluran pengaduan masyarakat terkait pencemaran, kerusakan lingkungan, dan pelanggaran.', tag: 'Aduan' },
+        ]" :key="svc.title">
+          <div class="rounded-md shadow-soft border border-gray-100 p-6 card-lift flex flex-col gap-3">
+            <div class="flex items-start justify-between">
+              <div
+                :class="svc.color === 'forest' ? 'bg-forest-100' : 'bg-earth-100'"
+                class="w-12 h-12 rounded-md flex items-center justify-center"
+              >
+                <i :class="'fas ' + svc.icon + ' text-xl ' + (svc.color === 'forest' ? 'text-forest-600' : 'text-earth-600')"></i>
+              </div>
+              <span
+                :class="svc.color === 'forest' ? 'bg-forest-50 text-forest-700' : 'bg-earth-50 text-earth-700'"
+                class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full"
+                x-text="svc.tag"
+              ></span>
+            </div>
+            <h4 class="font-bold text-forest-900 text-sm" x-text="svc.title"></h4>
+            <p class="text-gray-500 text-xs leading-relaxed flex-1" x-text="svc.desc"></p>
+            <a href="#kontak" class="inline-flex items-center gap-1 text-forest-600 text-xs font-semibold hover:text-forest-800 transition-colors mt-1">
+              Ajukan Sekarang <i class="fas fa-arrow-right text-[10px]"></i>
+            </a>
+          </div>
+        </template>
+      </div>
+
+      <!-- Prosedur -->
+      <div class="mt-16 bg-forest-50 rounded-md shadow-soft p-8">
+        <h3 class="text-xl font-bold text-forest-800 mb-8 text-center">Alur Pelayanan</h3>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <template x-for="(step, i) in [
+            { icon: 'fa-file-pen',         label: 'Isi Formulir' },
+            { icon: 'fa-folder-open',      label: 'Upload Berkas' },
+            { icon: 'fa-magnifying-glass', label: 'Verifikasi Berkas' },
+            { icon: 'fa-stamp',            label: 'Proses &amp; Review' },
+            { icon: 'fa-circle-check',     label: 'Penerbitan Dokumen' },
+          ]" :key="label">
+            <div class="flex flex-col items-center text-center gap-2">
+              <div class="relative">
+                <div class="w-14 h-14 bg-white border-2 border-forest-400 rounded-full flex items-center justify-center shadow-md">
+                  <i :class="'fas ' + step.icon + ' text-forest-600 text-xl'"></i>
+                </div>
+                <span class="absolute -top-1 -right-1 w-5 h-5 bg-forest-600 text-white rounded-full text-[10px] flex items-center justify-center font-bold" x-text="i + 1"></span>
+              </div>
+              <p class="text-xs font-semibold text-forest-800" x-html="step.label"></p>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== INFORMASI ===== -->
+  <section id="informasi" class="py-20 leaf-bg">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-wrap items-end justify-between gap-4 mb-12">
+        <div>
+          <span class="inline-block bg-forest-100 text-forest-700 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-3">Berita &amp; Pengumuman</span>
+          <h2 class="text-3xl md:text-4xl font-extrabold text-forest-900">Informasi Terkini</h2>
+        </div>
+        <a href="#" class="flex items-center gap-2 text-forest-600 font-semibold text-sm hover:text-forest-800 transition-colors">
+          Semua Berita <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <!-- Featured + List -->
+      <div class="grid lg:grid-cols-3 gap-6">
+
+        <!-- Featured -->
+        <div class="lg:col-span-2">
+          <div class="bg-white rounded-md shadow-md overflow-hidden card-lift h-full flex flex-col">
+            <div class="relative">
+              <img src="./img/ilustrasi-1.jpeg" alt="Berita Utama" class="w-full h-full object-cover" />
+              <span class="absolute top-4 left-4 bg-forest-600 text-white text-xs font-bold px-3 py-1 rounded-full">Terbaru</span>
+            </div>
+            <div class="p-6 flex flex-col flex-1">
+              <p class="text-xs text-gray-400 mb-2"><i class="fas fa-calendar-alt mr-1"></i> 8 Mei 2025 &nbsp;·&nbsp; <i class="fas fa-tag mr-1"></i> Program Lingkungan</p>
+              <h3 class="font-extrabold text-forest-900 text-lg leading-snug mb-3">Peluncuran Program Bank Sampah Maybrat 2025: Mengubah Sampah Jadi Berkah</h3>
+              <p class="text-gray-500 text-sm leading-relaxed flex-1">Dinas Lingkungan Hidup Kabupaten Maybrat secara resmi meluncurkan program Bank Sampah sebagai salah satu upaya strategis dalam pengelolaan sampah berbasis masyarakat yang berkelanjutan...</p>
+              <a href="#" class="mt-5 inline-flex items-center gap-2 bg-forest-600 hover:bg-forest-700 text-white text-sm font-semibold px-5 py-2.5 rounded-md transition-all self-start">
+                Baca Selengkapnya <i class="fas fa-arrow-right text-xs"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Side News -->
+        <div class="space-y-4 flex flex-col">
+          <template x-for="news in [
+            { cat: 'Pengumuman', date: '5 Mei 2025',  title: 'Jadwal Pemantauan Kualitas Udara Ambien Triwulan II 2025' },
+            { cat: 'Program',   date: '2 Mei 2025',  title: 'Pelatihan Daur Ulang Sampah Plastik Bagi Kelompok PKK Maybrat' },
+            { cat: 'Berita',    date: '28 Apr 2025', title: 'Penghargaan Adipura: DLH Maybrat Terus Tingkatkan Kualitas Lingkungan' },
+            { cat: 'Regulasi',  date: '22 Apr 2025', title: 'Sosialisasi Peraturan Daerah Tentang Pengelolaan Sampah Domestik' },
+          ]" :key="news.title">
+            <div class="bg-white rounded-md shadow-soft p-4 flex gap-4 items-start card-lift">
+              <img src="./img/ilustrasi-2.jpeg" alt="Thumb" class="w-16 h-16 rounded-md object-cover shrink-0" />
+              <div class="min-w-0">
+                <span class="text-[10px] font-bold uppercase text-forest-600 bg-forest-50 px-2 py-0.5 rounded-full" x-text="news.cat"></span>
+                <p class="text-xs text-gray-400 mt-1" x-text="news.date"></p>
+                <h4 class="text-xs font-semibold text-gray-800 mt-1 leading-snug line-clamp-2" x-text="news.title"></h4>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Pengumuman Strip -->
+      <div class="mt-10 bg-white rounded-md shadow-soft p-6 border-l-4 border-forest-500">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-9 h-9 bg-forest-100 rounded-md flex items-center justify-center">
+            <i class="fas fa-bullhorn text-forest-600"></i>
+          </div>
+          <h3 class="font-bold text-forest-800">Pengumuman Resmi</h3>
+        </div>
+        <div class="space-y-3">
+          <template x-for="p in [
+            { no: '001/DLH/2025', judul: 'Perubahan Jam Operasional TPA Kabupaten Maybrat Periode Mei-Juni 2025', tgl: '10 Mei 2025' },
+            { no: '002/DLH/2025', judul: 'Pengumuman Pemenang Lomba Lingkungan Sehat Tingkat Kelurahan 2025',     tgl: '7 Mei 2025' },
+            { no: '003/DLH/2025', judul: 'Rekrutmen Kader Lingkungan Hidup Kabupaten Maybrat Tahun 2025',          tgl: '3 Mei 2025' },
+          ]" :key="p.no">
+            <div class="flex items-center justify-between gap-4 py-2 border-b border-gray-100 last:border-0">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="shrink-0 w-7 h-7 bg-forest-100 rounded flex items-center justify-center">
+                  <i class="fas fa-file-lines text-forest-600 text-xs"></i>
+                </span>
+                <div class="min-w-0">
+                  <p class="text-[10px] text-gray-400 font-mono" x-text="p.no"></p>
+                  <p class="text-xs font-semibold text-gray-700 truncate" x-text="p.judul"></p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 shrink-0">
+                <p class="text-[10px] text-gray-400 hidden md:block" x-text="p.tgl"></p>
+                <a href="#" class="text-[10px] text-forest-600 font-semibold hover:underline">Unduh</a>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== GALERI ===== -->
+  <section id="galeri" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-14">
+        <span class="inline-block bg-earth-100 text-earth-700 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-3">Dokumentasi</span>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-forest-900">Galeri Kegiatan</h2>
+        <p class="text-gray-500 mt-3 max-w-xl mx-auto">Dokumentasi kegiatan Dinas Lingkungan Hidup Kabupaten Maybrat dalam pelestarian dan pengelolaan lingkungan hidup.</p>
+      </div>
+
+      <!-- Gallery Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" x-data="{ selected: null }">
+
+        <!-- Large feature -->
+        <div class="col-span-2 row-span-2">
+          <div class="relative group rounded-md overflow-hidden shadow-md h-full cursor-pointer" @click="selected = 0">
+            <img src="./img/galeri-1.jpeg" alt="Galeri 1" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            <div class="absolute inset-0 bg-forest-900/0 group-hover:bg-forest-900/40 transition-all flex items-center justify-center">
+              <i class="fas fa-expand text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity"></i>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-forest-900/80 p-4">
+              <p class="text-white text-sm font-bold">Program Penghijauan Kota Kumurkek 2025</p>
+              <p class="text-green-200 text-xs mt-0.5"><i class="fas fa-calendar-alt mr-1"></i> Maret 2025</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Smaller items -->
+        <template x-for="(g, i) in [
+          { title: 'Sosialisasi Pemilahan Sampah',    date: 'Feb 2025' },
+          { title: 'Bersih Sungai Bersama Warga',     date: 'Jan 2025' },
+          { title: 'Edukasi Sekolah Hijau',            date: 'Des 2024' },
+          { title: 'Monitoring Kualitas Air Danau',    date: 'Nov 2024' },
+        ]" :key="g.title">
+          <div class="relative group rounded-md overflow-hidden shadow-md cursor-pointer" @click="selected = i + 1">
+            <img src="./img/galeri-2.jpeg" alt="Galeri" class="w-full h-36 md:h-44 object-cover transition-transform duration-500 group-hover:scale-105" />
+            <div class="absolute inset-0 bg-forest-900/0 group-hover:bg-forest-900/40 transition-all flex items-center justify-center">
+              <i class="fas fa-expand text-white text-lg opacity-0 group-hover:opacity-100 transition-opacity"></i>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-forest-900/70 p-3">
+              <p class="text-white text-xs font-semibold leading-snug" x-text="g.title"></p>
+              <p class="text-green-200 text-[10px]" x-text="g.date"></p>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div class="mt-8 text-center">
+        <a href="#" class="inline-flex items-center gap-2 border-2 border-forest-500 text-forest-600 hover:bg-forest-500 hover:text-white font-semibold px-6 py-2.5 rounded-md transition-all text-sm">
+          <i class="fas fa-images"></i> Lihat Semua Foto
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== KONTAK ===== -->
+  <section id="kontak" class="py-20 leaf-bg">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-14">
+        <span class="inline-block bg-forest-100 text-forest-700 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-3">Hubungi Kami</span>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-forest-900">Kontak &amp; Lokasi</h2>
+        <p class="text-gray-500 mt-3 max-w-xl mx-auto">Silakan hubungi kami atau kunjungi kantor Dinas Lingkungan Hidup Kabupaten Maybrat untuk informasi lebih lanjut.</p>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-8">
+
+        <!-- Info Cards -->
+        <div class="space-y-4">
+          <template x-for="info in [
+            { icon: 'fa-map-marker-alt',  color: 'forest', title: 'Alamat Kantor',     body: 'Jl. Pemerintahan No. 1, Kumurkek, Kab. Maybrat, Papua Barat Daya, 98454' },
+            { icon: 'fa-phone',           color: 'earth',  title: 'Telepon',            body: '(0985) 000-0000\nFax: (0985) 000-0001' },
+            { icon: 'fa-envelope',        color: 'forest', title: 'Email',              body: 'dlh@maybrat.go.id\ninfo.dlhmaybrat@gmail.com' },
+            { icon: 'fa-clock',           color: 'earth',  title: 'Jam Pelayanan',      body: 'Senin – Kamis: 08.00 – 15.00 WIT\nJumat: 08.00 – 11.30 WIT' },
+          ]" :key="info.title">
+            <div class="bg-white rounded-md shadow-soft p-5 flex gap-4 items-start card-lift">
+              <div
+                :class="info.color === 'forest' ? 'bg-forest-100' : 'bg-earth-100'"
+                class="w-10 h-10 rounded-md flex items-center justify-center shrink-0"
+              >
+                <i :class="'fas ' + info.icon + ' ' + (info.color === 'forest' ? 'text-forest-600' : 'text-earth-600')"></i>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider" x-text="info.title"></p>
+                <p class="text-sm font-semibold text-gray-700 mt-1 leading-relaxed whitespace-pre-line" x-text="info.body"></p>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <!-- Form Aduan -->
+        <div id="aduan" class="lg:col-span-2 bg-white rounded-md shadow-md p-8">
+          <h3 class="text-xl font-extrabold text-forest-800 mb-1">Formulir Pengaduan &amp; Kontak</h3>
+          <p class="text-gray-400 text-sm mb-6">Sampaikan pengaduan, pertanyaan, atau masukan Anda kepada kami. Kami akan merespons dalam 2×24 jam kerja.</p>
+          <div class="space-y-4">
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Nama Lengkap <span class="text-red-400">*</span></label>
+                <input type="text" placeholder="Masukkan nama Anda" class="w-full border border-gray-200 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-forest-400 focus:border-transparent transition" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Nomor Telepon</label>
+                <input type="tel" placeholder="Contoh: 0812-xxxx-xxxx" class="w-full border border-gray-200 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-forest-400 focus:border-transparent transition" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1.5">Email <span class="text-red-400">*</span></label>
+              <input type="email" placeholder="email@domain.com" class="w-full border border-gray-200 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-forest-400 focus:border-transparent transition" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1.5">Kategori</label>
+              <select class="w-full border border-gray-200 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-forest-400 focus:border-transparent transition text-gray-600">
+                <option value="">-- Pilih Kategori --</option>
+                <option>Pengaduan Pencemaran Lingkungan</option>
+                <option>Informasi Layanan</option>
+                <option>Perizinan Lingkungan</option>
+                <option>Saran &amp; Masukan</option>
+                <option>Lainnya</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1.5">Pesan <span class="text-red-400">*</span></label>
+              <textarea rows="4" placeholder="Tuliskan pesan, pengaduan, atau pertanyaan Anda di sini..." class="w-full border border-gray-200 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-forest-400 focus:border-transparent transition resize-none"></textarea>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="checkbox" id="agree" class="accent-forest-600 w-4 h-4" />
+              <label for="agree" class="text-xs text-gray-500">Saya menyetujui bahwa data yang dikirimkan akan diproses oleh Dinas Lingkungan Hidup Kabupaten Maybrat.</label>
+            </div>
+            <button class="w-full bg-forest-600 hover:bg-forest-700 text-white font-bold py-3 rounded-md transition-all shadow-md flex items-center justify-center gap-2">
+              <i class="fas fa-paper-plane"></i> Kirim Pesan
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map Placeholder -->
+      <div class="mt-10 rounded-md overflow-hidden shadow-md">
+        <img src="./img/kantor-bupati.jpeg" alt="Peta Lokasi" class="w-full h-full object-cover" />
+        <div class="bg-white px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p class="font-bold text-forest-800 text-sm">Kantor Dinas Lingkungan Hidup Kab. Maybrat</p>
+            <p class="text-gray-400 text-xs">Jl. Pemerintahan No. 1, Kumurkek, Papua Barat Daya</p>
+          </div>
+          <a href="https://maps.google.com" target="_blank" class="flex items-center gap-2 bg-forest-600 text-white text-xs font-semibold px-4 py-2 rounded-md hover:bg-forest-700 transition-all">
+            <i class="fas fa-location-dot"></i> Buka di Google Maps
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="bg-forest-900 text-white">
+    <div class="max-w-7xl mx-auto px-6 py-14 grid md:grid-cols-4 gap-10">
+
+      <!-- Brand -->
+      <div class="md:col-span-1">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 bg-forest-600 rounded-md flex items-center justify-center">
+            <i class="fas fa-leaf text-white text-lg"></i>
+          </div>
+          <div>
+            <p class="text-[9px] text-green-300 uppercase tracking-widest">Kab. Maybrat</p>
+            <p class="text-sm font-extrabold leading-none">Dinas Lingkungan Hidup</p>
+          </div>
+        </div>
+        <p class="text-gray-400 text-xs leading-relaxed mb-5">Melindungi dan melestarikan alam Maybrat demi generasi mendatang yang sejahtera dan lingkungan yang lestari.</p>
+        <div class="flex gap-3">
+          <a href="#" class="w-8 h-8 bg-forest-700 hover:bg-forest-600 rounded-md flex items-center justify-center text-sm transition-colors"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="w-8 h-8 bg-forest-700 hover:bg-forest-600 rounded-md flex items-center justify-center text-sm transition-colors"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="w-8 h-8 bg-forest-700 hover:bg-forest-600 rounded-md flex items-center justify-center text-sm transition-colors"><i class="fab fa-youtube"></i></a>
+          <a href="#" class="w-8 h-8 bg-forest-700 hover:bg-forest-600 rounded-md flex items-center justify-center text-sm transition-colors"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
+
+      <!-- Links -->
+      <div>
+        <h4 class="text-sm font-bold uppercase tracking-wider text-green-300 mb-4">Navigasi</h4>
+        <ul class="space-y-2 text-xs text-gray-400">
+          <li><a href="#beranda"   class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-[9px]"></i> Beranda</a></li>
+          <li><a href="#profil"    class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-[9px]"></i> Profil Dinas</a></li>
+          <li><a href="#layanan"   class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-[9px]"></i> Layanan Publik</a></li>
+          <li><a href="#informasi" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-[9px]"></i> Berita &amp; Informasi</a></li>
+          <li><a href="#galeri"    class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-[9px]"></i> Galeri Kegiatan</a></li>
+          <li><a href="#kontak"    class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-[9px]"></i> Kontak Kami</a></li>
+        </ul>
+      </div>
+
+      <!-- Layanan -->
+      <div>
+        <h4 class="text-sm font-bold uppercase tracking-wider text-green-300 mb-4">Layanan</h4>
+        <ul class="space-y-2 text-xs text-gray-400">
+          <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-[9px]"></i> Permohonan AMDAL</a></li>
+          <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-[9px]"></i> Pengurusan UKL-UPL</a></li>
+          <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-[9px]"></i> Pengelolaan Limbah B3</a></li>
+          <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-[9px]"></i> Pemantauan Kualitas Air</a></li>
+          <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-[9px]"></i> Aduan Lingkungan</a></li>
+        </ul>
+      </div>
+
+      <!-- Kontak Footer -->
+      <div>
+        <h4 class="text-sm font-bold uppercase tracking-wider text-green-300 mb-4">Kontak</h4>
+        <ul class="space-y-3 text-xs text-gray-400">
+          <li class="flex gap-2"><i class="fas fa-map-marker-alt mt-0.5 text-forest-400 shrink-0"></i> Jl. Pemerintahan No. 1, Kumurkek, Maybrat, Papua Barat Daya</li>
+          <li class="flex gap-2"><i class="fas fa-phone mt-0.5 text-forest-400 shrink-0"></i> (0985) 000-0000</li>
+          <li class="flex gap-2"><i class="fas fa-envelope mt-0.5 text-forest-400 shrink-0"></i> dlh@maybrat.go.id</li>
+          <li class="flex gap-2"><i class="fas fa-clock mt-0.5 text-forest-400 shrink-0"></i> Sen–Kam 08.00–15.00 WIT<br/>Jumat 08.00–11.30 WIT</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="border-t border-forest-800 py-5">
+      <div class="max-w-7xl mx-auto px-6 flex flex-wrap items-center justify-between gap-3 text-xs text-gray-500">
+        <p>&copy; 2025 Dinas Lingkungan Hidup Kabupaten Maybrat. Hak Cipta Dilindungi.</p>
+        <div class="flex gap-4">
+          <a href="#" class="hover:text-gray-300 transition-colors">Kebijakan Privasi</a>
+          <a href="#" class="hover:text-gray-300 transition-colors">Syarat &amp; Ketentuan</a>
+          <a href="#" class="hover:text-gray-300 transition-colors">Peta Situs</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== BACK TO TOP ===== -->
+  <button
+    x-show="scrolled"
+    x-cloak
+    x-transition
+    @click="window.scrollTo({ top: 0, behavior: 'smooth' })"
+    class="fixed bottom-6 right-6 w-11 h-11 bg-forest-600 hover:bg-forest-700 text-white rounded-md shadow-lg flex items-center justify-center transition-all z-50"
+  >
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+</body>
+</html>
